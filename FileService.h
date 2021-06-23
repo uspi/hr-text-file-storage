@@ -9,13 +9,14 @@ using namespace std;
 
 #include "File.h"
 #include "Student.h"
+#include <Employee.h>
 
 class FileService {
 public:
-	static string removeZerosFromEnd(string str);
+	static string removeZerosFromEnd(string str, int startBarrier);
 
-	static void saveOutOne(vector<Student> students);
-	static void saveOutTwo(vector<Student> students);
+	static void saveOutOne(vector<Employee> students);
+	static void saveOutTwo(vector<Employee> students);
 
 	/// <summary>
 	/// Creates students from a text file in which their properties 
@@ -28,9 +29,9 @@ public:
 	/// <param name="groupIndex">The order of the property in the text file (Number from 0 to 2)</param>
 	/// <param name="ratingIndex">The order of the property in the text file (Number from 0 to 2)</param>
 	/// <returns></returns>
-	static vector<Student> getStudentsFromFile(
-		string file, int lineQuantity, int nameIndex,
-		int groupIndex, int ratingIndex);
+	static vector<Employee> getEmployeesFromFile(
+		string file, int lineQuantity, int lastNameIndex,
+		int initialsIndex, int bornYearIndex, int rateIndex);
 
 	static string getLineSpaces(int quantity);
 

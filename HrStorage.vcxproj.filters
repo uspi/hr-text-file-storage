@@ -59,5 +59,8 @@
     <ClInclude Include="Сonsole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Employee.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

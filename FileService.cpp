@@ -1,14 +1,15 @@
 #include "FileService.h"
 
-const int USER_NAME_LENGTH = 16;
-const int USER_GROUP_LENGTH = 16;
-const int USER_RATING_LENGTH = 16;
+const int LAST_NAME_LENGHT = 16;
+const int INITIALS_LENGHT = 16;
+const int BORN_YEAR_LENGHT = 16;
+const int RATE_LENGHT = 16;
 
-const int USER_PROPERTY_COUNT = 3;
+const int USER_PROPERTY_COUNT = 4;
 
-string FileService::removeZerosFromEnd(string str) {
+string FileService::removeZerosFromEnd(string str, int startBarrier) {
     int firstOfZero = str.find_first_of("0");
-    int startBarrier = 3;
+    startBarrier = 3;
 
     if (firstOfZero < startBarrier)
     {
@@ -18,38 +19,42 @@ string FileService::removeZerosFromEnd(string str) {
 	return str.erase(str.find_first_of("0"), str.size() - 1);
 }
 
-vector<Student> FileService::getStudentsFromFile(
-    string file, int lineQuantity, int nameIndex, 
-    int groupIndex, int ratingIndex) 
+vector<Employee> FileService::getEmployeesFromFile(
+    string file, int lineQuantity, int lastNameIndex,
+    int initialsIndex, int bornYearIndex, int rateIndex)
 {
     vector<string> fileLines = getFileByLines(file, getLineFeedIndices(file));
-    vector<Student> list;
+    vector<Employee> list;
 
     // map
-    vector<int> nameIndexes = 
-        mapProperty(fileLines.size(), USER_PROPERTY_COUNT, nameIndex);
-    vector<int> groupIndexes =
-        mapProperty(fileLines.size(), USER_PROPERTY_COUNT, groupIndex);
-    vector<int> ratingIndexes =
-        mapProperty(fileLines.size(), USER_PROPERTY_COUNT, ratingIndex);
+    vector<int> lastNameIndexes = 
+        mapProperty(fileLines.size(), USER_PROPERTY_COUNT, lastNameIndex);
+    vector<int> inititalsIndexes =
+        mapProperty(fileLines.size(), USER_PROPERTY_COUNT, initialsIndex);
+    vector<int> bornYearIndexes =
+        mapProperty(fileLines.size(), USER_PROPERTY_COUNT, bornYearIndex);
+    vector<int> rateIndexes =
+        mapProperty(fileLines.size(), USER_PROPERTY_COUNT, rateIndex);
 
     // get 
-    vector<string> namesSortedByAscending = getPropertiesByMap(fileLines, nameIndexes);
-    vector<string> groupsSortedByAscending = getPropertiesByMap(fileLines, groupIndexes);
-    vector<string> ratingsSortedByAscending = getPropertiesByMap(fileLines, ratingIndexes);
+    vector<string> lastNamesSortedByAscending = getPropertiesByMap(fileLines, lastNameIndexes);
+    vector<string> initialsSortedByAscending = getPropertiesByMap(fileLines, inititalsIndexes);
+    vector<string> bornYearsSortedByAscending = getPropertiesByMap(fileLines, bornYearIndexes);
+    vector<string> ratesSortedByAscending = getPropertiesByMap(fileLines, rateIndexes);
 
     int quantityOfObjects = lineQuantity / USER_PROPERTY_COUNT;
 
     // create objects
     for (int i = 0; i < quantityOfObjects; i++)
     {
-        Student stud(
-            namesSortedByAscending[i], 
-            groupsSortedByAscending[i], 
-            stof(ratingsSortedByAscending[i])
+        Employee empl(
+            lastNamesSortedByAscending[i],
+            initialsSortedByAscending[i],
+            stoi(bornYearsSortedByAscending[i]),
+            stof(ratesSortedByAscending[i])
         );
 
-        list.push_back(stud);
+        list.push_back(empl);
     }
 
     return list;
@@ -86,31 +91,37 @@ vector<int> FileService::mapProperty(
     return indexesOfProperty;
 }
 
-void FileService::saveOutOne(vector<Student> students) {
+void FileService::saveOutOne(vector<Employee> employees) {
     string filePath = "out1.txt";
     File file(filePath);
 
     string lines = "";
 
     // creating lines
-    for (int i = 0; i < students.size(); i++)
+    for (int i = 0; i < employees.size(); i++)
     {
         string currentLine = "";
 
-        // work with name
-        int quantitySpaces = USER_NAME_LENGTH - students[i].name.length();
-        currentLine = students[i].name;
+        // work with last name
+        int quantitySpaces = LAST_NAME_LENGHT - employees[i].lastName.length();
+        currentLine = employees[i].lastName;
         currentLine += getLineSpaces(quantitySpaces);
         
-        // work with group
-        quantitySpaces = USER_GROUP_LENGTH - students[i].group.length();
-        currentLine += students[i].group;
+        // work with initals
+        quantitySpaces = INITIALS_LENGHT - employees[i].initials.length();
+        currentLine += employees[i].initials;
         currentLine += getLineSpaces(quantitySpaces);
         
-        // work with rating
-        string currentStudentRating = removeZerosFromEnd(to_string(students[i].rating));
-        quantitySpaces = USER_RATING_LENGTH - currentStudentRating.length();
-        currentLine += currentStudentRating;
+        // work with born year
+        string currentEmployeeBornYear = removeZerosFromEnd(to_string(employees[i].bornYear), 6);
+        quantitySpaces = BORN_YEAR_LENGHT - currentEmployeeBornYear.length();
+        currentLine += currentEmployeeBornYear;
+        currentLine += getLineSpaces(quantitySpaces);
+
+        // work with rate
+        string currentRate = removeZerosFromEnd(to_string(employees[i].rate), 6);
+        quantitySpaces = RATE_LENGHT - currentRate.length();
+        currentLine += currentRate;
         currentLine += getLineSpaces(quantitySpaces);
 
         lines += currentLine + "\n";
@@ -119,7 +130,7 @@ void FileService::saveOutOne(vector<Student> students) {
     file.createText(lines);
 }
 
-void FileService::saveOutTwo(vector<Student> students) {
+void FileService::saveOutTwo(vector<Employee> employees) {
     string filePath = "out2.txt";
     File file(filePath);
 
@@ -127,34 +138,42 @@ void FileService::saveOutTwo(vector<Student> students) {
 
     string currentLine = "";
     
-    // names line
-    for (int i = 0; i < students.size(); i++) {
-        // work with name
-        int quantitySpaces = USER_NAME_LENGTH - students[i].name.length();
-        currentLine += students[i].name;
+    // last name line
+    for (int i = 0; i < employees.size(); i++) {
+        int quantitySpaces = LAST_NAME_LENGHT - employees[i].lastName.length();
+        currentLine += employees[i].lastName;
         currentLine += getLineSpaces(quantitySpaces);
     }
 
     lines += currentLine + "\n";
     currentLine = "";
 
-    // group line
-    for (int i = 0; i < students.size(); i++) {
-        // work with group
-        int quantitySpaces = USER_GROUP_LENGTH - students[i].group.length();
-        currentLine += students[i].group;
+    // initials line
+    for (int i = 0; i < employees.size(); i++) {
+        int quantitySpaces = INITIALS_LENGHT - employees[i].initials.length();
+        currentLine += employees[i].initials;
         currentLine += getLineSpaces(quantitySpaces);
     }
 
     lines += currentLine + "\n";
     currentLine = "";
 
-    // rating line
-    for (int i = 0; i < students.size(); i++) {
-        // work with rating
-        string currentStudentRating = removeZerosFromEnd(to_string(students[i].rating));
-        int quantitySpaces = USER_RATING_LENGTH - currentStudentRating.length();
-        currentLine += currentStudentRating;
+    // born year line
+    for (int i = 0; i < employees.size(); i++) {
+        string currentBornYear = removeZerosFromEnd(to_string(employees[i].bornYear), 6);
+        int quantitySpaces = BORN_YEAR_LENGHT - currentBornYear.length();
+        currentLine += currentBornYear;
+        currentLine += getLineSpaces(quantitySpaces);
+    }
+
+    lines += currentLine + "\n";
+    currentLine = "";
+
+    // rate line
+    for (int i = 0; i < employees.size(); i++) {
+        string currentRate = removeZerosFromEnd(to_string(employees[i].rate), 6);
+        int quantitySpaces = RATE_LENGHT - currentRate.length();
+        currentLine += currentRate;
         currentLine += getLineSpaces(quantitySpaces);
     }
 

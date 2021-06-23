@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPs.h" />
+    <ClInclude Include="Employee.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="FileService.h" />
     <ClInclude Include="Input.h" />

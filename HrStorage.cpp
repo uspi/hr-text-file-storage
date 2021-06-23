@@ -6,7 +6,6 @@
 #include "Student.h"
 #include "FileService.h"
 
-
 int main()
 {
     FileService flservice;
@@ -23,7 +22,8 @@ int main()
 
     bool fileExist = file.isExists(filePath);
 
-    vector<Student> students;
+    vector<Employee> employees;
+    Employee oldest("", "", 3000, 0);
 
     // exists
     if (fileExist)
@@ -33,49 +33,68 @@ int main()
         window.print("Файл существует, содержание:", true, CPs::ru);
         window.print(fileBody, true, CPs::ru);
 
-        students = FileService::getStudentsFromFile(fileBody, file.lineCount, 1, 2, 3);
+        employees = FileService::getEmployeesFromFile(fileBody, file.lineCount, 1, 2, 3, 4);
 
         // if no exists
     }
     else {
         window.print("Файл не существует", true, CPs::ru);
-        window.print("Начало создания файла, сколько студентов вы хотите создать?", true, CPs::ru);
+        window.print("Начало создания файла, сколько работников вы хотите создать?", true, CPs::ru);
         window.print("Введите количество(до 9): ", true, CPs::ru);
 
-        int quantityOfSutdents = stoi(inp.getInputText(1, CPs::def));
+        int quantityOfEmployees = stoi(inp.getInputText(1, CPs::def));
 
-        string name;
-        string group;
-        float rating;
+        string lastName;
+        string initials;
+        int bornYear;
+        float rate;
 
         // creating students and writitng in file
-        for (int i = 1; i <= quantityOfSutdents; i++)
+        for (int i = 1; i <= quantityOfEmployees; i++)
         {
-            // name
-            window.print("Введите имя студента номер ", true, CPs::ru);
+            // last name
+            window.print("Введите фамилию сотрудника номер ", true, CPs::ru);
             window.print(to_string(i) + ": ", false, CPs::ru);
-            name = inp.getInputText(30, CPs::ru);
+            lastName = inp.getInputText(30, CPs::ru);
 
-            // group
-            window.print("Введите группу студента номер ", false, CPs::ru);
+            // initials
+            window.print("Введите инициалы сотрудника номер ", false, CPs::ru);
             window.print(to_string(i) + ": ", false, CPs::ru);
-            group = inp.getInputText(10, CPs::ru);
+            initials = inp.getInputText(10, CPs::ru);
 
-            // rating
-            window.print("Введите рейтинг студента номер ", false, CPs::ru);
+            // born year
+            window.print("Введите год рождения сотрудника номер ", false, CPs::ru);
             window.print(to_string(i) + ": ", false, CPs::ru);
-            rating = stof(inp.getInputText(3, CPs::ru));
+            bornYear = stoi(inp.getInputText(3, CPs::ru));
+
+            // rate
+            window.print("Введите зарплату сотрудника номер ", false, CPs::ru);
+            window.print(to_string(i) + ": ", false, CPs::ru);
+            rate = stof(inp.getInputText(3, CPs::ru));
 
             // create student add to array
-            Student stud(name, group, rating);
-            students.push_back(stud);
+            Employee stud(lastName, initials, bornYear, rate);
+            employees.push_back(stud);
 
-            window.print("Созданние студентов окончено", true, CPs::ru);
+            window.print("Созданние сотрудников окончено", true, CPs::ru);
         }
     }
 
-    FileService::saveOutOne(students);
-    FileService::saveOutTwo(students);
+    // find oldest
+    for (int i = 0; i < employees.size(); i++)
+    {
+        if (employees[i].bornYear < oldest.bornYear)
+        {
+            oldest = employees[i];
+        }
+    }
+
+    // show oldest
+    window.print("Самый старый сотрудник: ", true, CPs::ru);
+    window.print(oldest.toString(), false, CPs::ru);
+
+    FileService::saveOutOne(employees);
+    FileService::saveOutTwo(employees);
 
     window.print("Сохранение в двух представлениях окончено", true, CPs::ru);
 }
